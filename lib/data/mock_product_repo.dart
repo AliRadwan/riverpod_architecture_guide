@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_guide/constants/mock_product_list.dart';
 import 'package:riverpod_architecture_guide/data/test_products.dart';
 
@@ -6,7 +7,7 @@ class MockProductRepo {
   MockProductRepo._();
   static MockProductRepo instance = MockProductRepo._();
 
-  final List<Product> _products = kTestProducts;
+  final List<Product> _products = testProducts;
   final List<Item> _items = testItems;
 
   List<Product> getProductList(){
@@ -39,3 +40,7 @@ Stream<List<Item>> watchItem(){
     return Stream.value(_items);
 }
 }
+
+final ProductProvider = Provider<MockProductRepo>((ref) {
+  return MockProductRepo.instance;
+});
