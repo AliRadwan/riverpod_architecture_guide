@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_guide/product_view.dart';
+import 'package:riverpod_architecture_guide/view/product_view.dart';
 
 import 'data/mock_product_repo.dart';
-import 'item_view.dart';
+import 'view/item_view.dart';
 
 void main() {
   runApp(ProviderScope(child: const MyApp()));
@@ -35,21 +35,27 @@ class MyHomePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 250,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                ),
-              ),
-              child: Center(
-                child: product.imageUrl != null
-                    ? Image.network(product.imageUrl!)
-                    : const Icon(Icons.image, size: 120, color: Colors.grey),
-              ),
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final product =  ref.watch(getProductProvider(id));
+               return product.when(data: (product)=> Container(
+                 height: 250,
+                 width: double.infinity,
+                 decoration: BoxDecoration(
+                   color: Colors.white,
+                   borderRadius: const BorderRadius.only(
+                     bottomLeft: Radius.circular(25),
+                     bottomRight: Radius.circular(25),
+                   ),
+                 ),
+                 child: Center(
+                   child: product.imageUrl != null
+                       ? Image.network(product.imageUrl!)
+                       : const Icon(Icons.image, size: 120, color: Colors.grey),
+                 ),
+               ),  error: (e,st)=>Text(e.toString()),
+                   loading: ()=>Center(child: CircularProgressIndicator(),));
+              },
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

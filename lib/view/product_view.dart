@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'data/mock_product_repo.dart';
+import '../data/mock_product_repo.dart';
 
 class ProductView extends ConsumerWidget {
   const ProductView({super.key});

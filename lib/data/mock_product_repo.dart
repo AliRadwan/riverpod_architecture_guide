@@ -30,6 +30,9 @@ Future<List<Product>> featchProductList()async{
     return Future.value(_products);
 }
 
+Stream<Product> getProductitem(String id){
+    return watchProduct().map((prods)=> prods.firstWhere((prod)=> prod.id == id) );
+}
 Future<List<Item>> fetchItemList()async{
   await Future.delayed(Duration(seconds: 2));
   return Future.value(_items);
@@ -67,4 +70,9 @@ final streamProudctProvider = StreamProvider<List<Product>>((ref) {
 final  streamItemProvider = StreamProvider<List<Item>>((ref) {
   final streamItemPtovider =  ref.watch(productProvider);
   return streamItemPtovider.watchItem();
+});
+
+final getProductProvider = StreamProvider.family<Product,String>((ref,id) {
+  final prod  = ref.watch(productProvider) ;
+  return prod.getProductitem(id);
 });
