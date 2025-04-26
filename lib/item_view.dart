@@ -18,14 +18,15 @@ class ItemView extends StatelessWidget {
           const SizedBox(height: 8),
           Consumer(
             builder: (BuildContext context, WidgetRef ref, Widget? child) {
-              final itemList = ref.watch(productProvider).getItemList();
-              return SizedBox(
+              // final itemList = ref.watch(futuerItemProvider);
+              final itemList = ref.watch(streamItemProvider);
+              return itemList.when(data: (xitem)=> SizedBox(
                 height: 150,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: itemList.length,
+                  itemCount: xitem.length,
                   itemBuilder: (context, index) {
-                    final item = itemList[index];
+                    final item = xitem[index];
                     return Card(
                       margin: const EdgeInsets.only(right: 16),
                       child: Container(
@@ -37,9 +38,9 @@ class ItemView extends StatelessWidget {
                             Expanded(
                               child: Center(
                                 child:
-                                    item.imageUrl != null
-                                        ? Image.network(item.imageUrl!, fit: BoxFit.cover)
-                                        : const Icon(Icons.image, size: 40),
+                                item.imageUrl != null
+                                    ? Image.network(item.imageUrl!, fit: BoxFit.cover)
+                                    : const Icon(Icons.image, size: 40),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -59,7 +60,8 @@ class ItemView extends StatelessWidget {
                     );
                   },
                 ),
-              );
+              ), error: (e,st)=>Text(e.toString()),
+              loading: ()=>Center(child: CircularProgressIndicator(),));
             },
           ),
         ],

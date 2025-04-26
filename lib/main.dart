@@ -30,7 +30,7 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     final product = ref.watch(productProvider).getProduct(id)!;
     return Scaffold(
-      backgroundColor: Colors.cyan,
+      backgroundColor: Colors.grey,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
