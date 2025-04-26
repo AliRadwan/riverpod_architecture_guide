@@ -5,7 +5,7 @@ import 'package:riverpod_architecture_guide/data/test_products.dart';
 
 class MockProductRepo {
   MockProductRepo._();
-  static MockProductRepo instance = MockProductRepo._();
+  static MockProductRepo _instance = MockProductRepo._();
 
   final List<Product> _products = testProducts;
   final List<Item> _items = testItems;
@@ -41,6 +41,6 @@ Stream<List<Item>> watchItem(){
 }
 }
 
-final ProductProvider = Provider<MockProductRepo>((ref) {
-  return MockProductRepo.instance;
+final productProvider = Provider<MockProductRepo>((ref) {
+  return MockProductRepo._instance;
 });
