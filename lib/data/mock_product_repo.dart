@@ -7,9 +7,6 @@ import 'package:riverpod_architecture_guide/data/test_products.dart';
 
 
 class MockProductRepo {
-  // MockProductRepo._();
-  // static MockProductRepo _instance = MockProductRepo._();
-
   final List<Product> _products = testProducts;
   final List<Item> _items = testItems;
 
@@ -75,11 +72,15 @@ final  streamItemProvider = StreamProvider<List<Item>>((ref) {
   return streamItemPtovider.watchItem();
 });
 
+
+
 final getProductProvider = StreamProvider.autoDispose.family<Product,String>((ref,id) {
   debugPrint('created productProvider($id)');
+
   ref.onResume(() => debugPrint('resume productProvider($id)'));
   ref.onCancel(() => debugPrint('cancel productProvider($id)'));
   ref.onDispose(() => debugPrint('disposed productProvider($id)'));
+
   final link =  ref.keepAlive();
   final timer = Timer(Duration(seconds: 10), ()=>link.close());
   ref.onDispose(()=>timer.cancel());

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_guide/comman_widget/async_value_widget.dart';
 import 'package:riverpod_architecture_guide/view/product_view.dart';
 
 import 'data/mock_product_repo.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: const MyHomePage(id: '1',),
+      home: const MyHomePage(id: '2',),
     );
   }
 }
@@ -38,7 +39,7 @@ class MyHomePage extends ConsumerWidget {
             Consumer(
               builder: (BuildContext context, WidgetRef ref, Widget? child) {
                 final product =  ref.watch(getProductProvider(id));
-               return product.when(data: (product)=> Container(
+               return AsyncValueWidget(value: product,data: (product)=> Container(
                  height: 250,
                  width: double.infinity,
                  decoration: BoxDecoration(
@@ -53,8 +54,7 @@ class MyHomePage extends ConsumerWidget {
                        ? Image.network(product.imageUrl!)
                        : const Icon(Icons.image, size: 120, color: Colors.grey),
                  ),
-               ),  error: (e,st)=>Text(e.toString()),
-                   loading: ()=>Center(child: CircularProgressIndicator(),));
+               ));
               },
             ),
             Padding(

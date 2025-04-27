@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_guide/comman_widget/async_value_widget.dart';
 
 import '../data/mock_product_repo.dart';
 
@@ -20,7 +21,7 @@ class ItemView extends StatelessWidget {
             builder: (BuildContext context, WidgetRef ref, Widget? child) {
               // final itemList = ref.watch(futuerItemProvider);
               final itemList = ref.watch(streamItemProvider);
-              return itemList.when(data: (xitem)=> SizedBox(
+              return AsyncValueWidget(value: itemList, data: (xitem)=>SizedBox(
                 height: 150,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -60,8 +61,8 @@ class ItemView extends StatelessWidget {
                     );
                   },
                 ),
-              ), error: (e,st)=>Text(e.toString()),
-              loading: ()=>Center(child: CircularProgressIndicator(),));
+              ));
+
             },
           ),
         ],
