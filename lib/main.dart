@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_guide/comman_widget/async_value_widget.dart';
+import 'package:riverpod_architecture_guide/view/product_view.dart';
 
 import 'data/mock_product_repo.dart';
+import 'view/item_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,46 +18,99 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: const MyHomePage(id: '1',),
+      home: const MyHomePage(id: '2',),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerWidget {
   const MyHomePage({super.key, required this.id});
   final String id;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    final itemlist  =  MockProductRepo.instance.getItemList();
-    final productlist  =  MockProductRepo.instance.getProductList();
-    final product  =  MockProductRepo.instance.getProduct(widget.id)!;
+  Widget build(BuildContext context,WidgetRef ref) {
+    final product = ref.watch(productProvider).getProduct(id)!;
     return Scaffold(
-      body: SizedBox(
-        height: 300,
+      backgroundColor: Colors.grey,
+      body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(title: Text(product.title),),
-            ListView.builder(
-                itemCount: itemlist.length,
-                itemBuilder:(context,index){
-                  final item  =  itemlist[index];
-              ListTile(title:Text(item.title));
-            } ),
-            ListView.builder(
-                itemCount: productlist.length,
-                itemBuilder:(context,index){
-                  final product  =  itemlist[index];
-              ListTile(title:Text(product.title));
-            } ),
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final product =  ref.watch(getProductProvider(id));
+               return AsyncValueWidget(value: product,data: (product)=> Container(
+                 height: 250,
+                 width: double.infinity,
+                 decoration: BoxDecoration(
+                   color: Colors.white,
+                   borderRadius: const BorderRadius.only(
+                     bottomLeft: Radius.circular(25),
+                     bottomRight: Radius.circular(25),
+                   ),
+                 ),
+                 child: Center(
+                   child: product.imageUrl != null
+                       ? Image.network(product.imageUrl!)
+                       : const Icon(Icons.image, size: 120, color: Colors.grey),
+                 ),
+               ));
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Product Details",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    product.description ?? "No description available",
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "\$${product.price.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.shopping_cart),
+                        label: const Text("Add to Cart"),
+                        onPressed: () {
+                          // Add to cart functionality
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("${product.title} added to cart"))
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.deepOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            ItemView(),
+            ProductView(),
+
           ],
         ),
-      )
+      ),
     );
-  }
-}
+  }}
