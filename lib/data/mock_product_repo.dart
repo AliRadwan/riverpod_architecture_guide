@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_guide/constants/mock_product_list.dart';
 import 'package:riverpod_architecture_guide/data/test_products.dart';
@@ -72,7 +75,14 @@ final  streamItemProvider = StreamProvider<List<Item>>((ref) {
   return streamItemPtovider.watchItem();
 });
 
-final getProductProvider = StreamProvider.family<Product,String>((ref,id) {
+final getProductProvider = StreamProvider.autoDispose.family<Product,String>((ref,id) {
+  debugPrint('created productProvider($id)');
+  ref.onResume(() => debugPrint('resume productProvider($id)'));
+  ref.onCancel(() => debugPrint('cancel productProvider($id)'));
+  ref.onDispose(() => debugPrint('disposed productProvider($id)'));
+  final link =  ref.keepAlive();
+  final timer = Timer(Duration(seconds: 10), ()=>link.close());
+  ref.onDispose(()=>timer.cancel());
   final prod  = ref.watch(productProvider) ;
   return prod.getProductitem(id);
 });
